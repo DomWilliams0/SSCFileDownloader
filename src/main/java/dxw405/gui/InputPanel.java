@@ -1,6 +1,8 @@
 package dxw405.gui;
 
 
+import dxw405.util.Logging;
+
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.BorderLayout;
@@ -12,7 +14,13 @@ import java.nio.file.Paths;
 public class InputPanel extends JPanel
 {
 	private static final int BORDER_THICKNESS = 5;
-	private static final File DEFAULT_DIR = new File(System.getProperty("user.home"));
+	private static final File DEFAULT_DIR;
+
+	static
+	{
+		DEFAULT_DIR = new File(System.getProperty("user.home"));
+		Logging.debug("Set default save directory to '" + DEFAULT_DIR.getAbsolutePath() + "'");
+	}
 
 	private JTextField saveDirField;
 	private JTextField siteField;

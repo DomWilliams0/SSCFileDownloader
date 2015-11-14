@@ -1,6 +1,7 @@
 package dxw405.gui;
 
 import dxw405.DownloaderModel;
+import dxw405.util.Logging;
 
 import javax.swing.*;
 import java.awt.BorderLayout;
@@ -36,7 +37,7 @@ public class ImageDownloaderGUI
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException e)
 		{
-			System.err.println("Could not use native theme: " + e);
+			Logging.error("Could not use native theme", e);
 		}
 	}
 
