@@ -3,6 +3,7 @@ package dxw405.gui;
 
 import dxw405.DownloaderModel;
 import dxw405.util.Logging;
+import dxw405.util.TextFieldPlaceholder;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -32,7 +33,7 @@ public class InputPanel extends JPanel
 	public InputPanel(DownloaderModel downloaderModel)
 	{
 		model = downloaderModel;
-		siteField = new JTextField();
+		siteField = new TextFieldPlaceholder("http://www.google.com");
 		saveDirField = new JTextField();
 		saveDirChooser = new JFileChooser();
 
