@@ -1,7 +1,7 @@
 package dxw405.gui;
 
 import dxw405.DownloaderModel;
-import dxw405.Utils;
+import dxw405.util.Utils;
 import dxw405.util.Logging;
 
 import javax.swing.*;

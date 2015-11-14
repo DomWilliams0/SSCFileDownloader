@@ -1,6 +1,4 @@
-package dxw405;
-
-import dxw405.util.Logging;
+package dxw405.util;
 
 import java.io.File;
 import java.io.FileInputStream;
