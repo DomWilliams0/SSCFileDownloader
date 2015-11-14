@@ -4,6 +4,7 @@ package dxw405.gui;
 import dxw405.DownloaderModel;
 import dxw405.util.Logging;
 import dxw405.util.TextFieldPlaceholder;
+import scala.Option;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -151,6 +152,8 @@ public class InputPanel extends JPanel
 		if (selectedFile == null)
 			selectedFile = DEFAULT_DIR;
 
-		model.download(siteField.getText(), selectedFile.getAbsolutePath());
+		Option<String> error = model.download(siteField.getText(), selectedFile.getAbsolutePath());
+		if (error.isDefined())
+			JOptionPane.showMessageDialog(this, "<html><b>Could not download files</b><br>" + error.get() + "</html>", "Uh oh", JOptionPane.ERROR_MESSAGE);
 	}
 }
