@@ -37,10 +37,10 @@ public class ImageDownloaderGUI implements ActionListener
 		inputPanel = new InputPanel(model);
 		topPanel = new TopPanel(this);
 
-		JPanel headerPanel = new JPanel(new BorderLayout());
-		headerPanel.add(inputPanel, BorderLayout.SOUTH);
-		headerPanel.add(topPanel, BorderLayout.NORTH);
-		frame.add(headerPanel, BorderLayout.NORTH);
+		frame.add(inputPanel, BorderLayout.NORTH);
+		frame.setJMenuBar(topPanel);
+
+		frame.add(inputPanel, BorderLayout.NORTH);
 	}
 
 	private void initOSSkin()

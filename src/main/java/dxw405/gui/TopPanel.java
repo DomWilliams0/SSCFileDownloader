@@ -1,20 +1,22 @@
 package dxw405.gui;
 
 import javax.swing.*;
-import java.awt.FlowLayout;
+import java.awt.BorderLayout;
 import java.awt.event.ActionListener;
 
-public class TopPanel extends JPanel
+public class TopPanel extends JMenuBar
 {
 	public TopPanel(ActionListener buttonListener)
 	{
-		setLayout(new FlowLayout(FlowLayout.RIGHT));
+		setLayout(new BorderLayout());
 
-		JPanel container = new JPanel();
-		container.add(addButton(buttonListener, "Download", Action.DOWNLOAD_BUTTON_PRESSED));
-		container.add(addButton(buttonListener, "Exit", Action.EXIT));
+		// title
+		add(new JLabel("  Specify and download files from a webpage!"), BorderLayout.WEST);
 
-		add(container);
+		JPanel buttons = new JPanel();
+		buttons.add(addButton(buttonListener, "Download", Action.DOWNLOAD_BUTTON_PRESSED));
+		buttons.add(addButton(buttonListener, "Exit", Action.EXIT));
+		add(buttons, BorderLayout.EAST);
 	}
 
 	private JButton addButton(ActionListener buttonListener, String label, Action action)
