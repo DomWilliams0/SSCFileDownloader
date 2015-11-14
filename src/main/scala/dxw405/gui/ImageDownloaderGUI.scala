@@ -1,7 +1,7 @@
 package dxw405.gui
 
 import java.awt.BorderLayout
-import java.awt.event.{ActionEvent, ActionListener, WindowEvent}
+import java.awt.event.{ActionEvent, ActionListener, WindowAdapter, WindowEvent}
 import javax.swing.{JFrame, UIManager, WindowConstants}
 
 import dxw405.DownloaderModel
@@ -22,6 +22,9 @@ class ImageDownloaderGUI(downloaderModel: DownloaderModel) extends ActionListene
     frame.setTitle("Image Downloader")
     frame.setSize(800, 600)
     frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE)
+    frame.addWindowListener(new WindowAdapter {
+      override def windowClosing(e: WindowEvent): Unit = model.close()
+    })
 
     frame.add(inputPanel, BorderLayout.NORTH)
     frame.setJMenuBar(topPanel)

@@ -10,7 +10,7 @@ import scala.collection.JavaConversions._
 import scala.collection.mutable
 
 class DownloaderModel extends Observable {
-  private var fileQueue = mutable.Queue[String]()
+  private val fileQueue = new DownloadQueue(5)
 
   /**
     * Gets all image URLs on the given page
@@ -62,8 +62,7 @@ class DownloaderModel extends Observable {
     val urls = getImages(site)
 
     // add to queue
-    fileQueue.clear()
-    fileQueue = urls.foldLeft(fileQueue)(_ += _)
+    fileQueue.update(urls)
 
     Logging.debug(s"Images to download: $fileQueue")
 
@@ -71,5 +70,7 @@ class DownloaderModel extends Observable {
 
     None
   }
+
+  def close(): Unit = fileQueue.close()
 
 }
