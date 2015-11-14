@@ -1,6 +1,7 @@
 package dxw405.gui;
 
 
+import dxw405.DownloaderModel;
 import dxw405.util.Logging;
 
 import javax.swing.*;
@@ -18,16 +19,19 @@ public class InputPanel extends JPanel
 
 	static
 	{
-		DEFAULT_DIR = new File(System.getProperty("user.home"));
+		DEFAULT_DIR = Paths.get(System.getProperty("user.home"), "downloaded-files").toFile();
 		Logging.debug("Set default save directory to '" + DEFAULT_DIR.getAbsolutePath() + "'");
 	}
+
+	private DownloaderModel model;
 
 	private JTextField saveDirField;
 	private JTextField siteField;
 	private JFileChooser saveDirChooser;
 
-	public InputPanel()
+	public InputPanel(DownloaderModel downloaderModel)
 	{
+		model = downloaderModel;
 		siteField = new JTextField();
 		saveDirField = new JTextField();
 		saveDirChooser = new JFileChooser();
@@ -140,4 +144,12 @@ public class InputPanel extends JPanel
 	}
 
 
+	public void downloadClicked()
+	{
+		File selectedFile = saveDirChooser.getSelectedFile();
+		if (selectedFile == null)
+			selectedFile = DEFAULT_DIR;
+
+		model.download(siteField.getText(), selectedFile.getAbsolutePath());
+	}
 }
