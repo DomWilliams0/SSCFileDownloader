@@ -5,16 +5,8 @@ import org.jsoup.Jsoup
 import scala.collection.JavaConversions._
 import scala.collection.mutable
 
-class ImageDownloader
+class DownloaderModel
 {
-	def init(): Unit =
-	{
-		val site = "http://www.tutorialspoint.com/scala/"
-
-		val images = getImages(site)
-		println(s"Found ${images.size} images: $images)")
-	}
-
 	/**
 	  * Gets all image URLs on the given page
 	  * @param site The URL of the page
@@ -28,9 +20,4 @@ class ImageDownloader
 		images map (im => im.baseUri() + im.attr("src"))
 	}
 
-}
-
-object ImageDownloader
-{
-	def main(args: Array[String]) = new ImageDownloader().init()
 }
