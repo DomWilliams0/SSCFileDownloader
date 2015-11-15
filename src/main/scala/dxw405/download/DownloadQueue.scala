@@ -15,13 +15,10 @@ import scala.collection.mutable
 class DownloadQueue(threadCount: Int) {
 
   protected final val intermediateResultProperty = "intermediate result"
-
-  protected var saveDirectory: File = null
-
   private var queue = mutable.ListBuffer[DownloadWrapper]()
 
   def update(urls: mutable.Seq[String], saveDirectory: File) = {
-    this.saveDirectory = saveDirectory
+    queue.clear()
     queue = (urls foldLeft queue) ((acc, urlStr) => acc += new DownloadWrapper(new URL(urlStr), saveDirectory))
   }
 
