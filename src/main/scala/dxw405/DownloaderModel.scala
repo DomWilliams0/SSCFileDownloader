@@ -1,8 +1,10 @@
 package dxw405
 
+import java.io.File
 import java.net.URL
 import java.util.Observable
 
+import dxw405.download.DownloadQueue
 import dxw405.util.Logging
 import org.jsoup.Jsoup
 
@@ -53,6 +55,11 @@ class DownloaderModel extends Observable {
     * @return Some error message, or None if the operation succeeded
     */
   def download(site: String, downloadDirPath: String): Option[String] = {
+    // validate save dir
+    val saveDir = new File(downloadDirPath)
+    if (!saveDir.exists())
+      return Some("The supplied save directory doesn't exist")
+
     // validate URL
     val validationErrorMessage = validateURL(site)
     if (validationErrorMessage.isDefined)
@@ -61,10 +68,11 @@ class DownloaderModel extends Observable {
     // fetch urls
     val urls = getImages(site)
 
-    // add to queue
-    fileQueue.update(urls)
-
     Logging.debug(s"Images to download: $fileQueue")
+
+    // add to queue
+    fileQueue.update(urls, saveDir)
+
 
     // todo start downloading
 
