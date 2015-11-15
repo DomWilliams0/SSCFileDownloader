@@ -1,20 +1,19 @@
 package dxw405.gui
 
-import java.awt.BorderLayout
+import java.awt.{FlowLayout, BorderLayout}
 import java.awt.event.ActionListener
-import javax.swing.{JButton, JLabel, JMenuBar, JPanel}
+import javax.swing.{JButton, JMenuBar, JPanel}
 
 import dxw405.gui.GUIAction.GUIAction
 
 class TopPanel(buttonListener: ActionListener) extends JMenuBar {
   {
-    setLayout(new BorderLayout)
-    add(new JLabel("  Specify and download files from a webpage!"), BorderLayout.WEST)
+    setLayout(new BorderLayout())
 
-    val buttons = new JPanel
+    val buttons = new JPanel(new FlowLayout(FlowLayout.LEFT))
     buttons.add(addButton(buttonListener, "Download", GUIAction.DownloadButtonPressed))
     buttons.add(addButton(buttonListener, "Exit", GUIAction.Exit))
-    add(buttons, BorderLayout.EAST)
+    add(buttons, BorderLayout.CENTER)
   }
 
   private def addButton(buttonListener: ActionListener, label: String, action: GUIAction): JButton = {
