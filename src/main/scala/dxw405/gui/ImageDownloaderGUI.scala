@@ -13,8 +13,10 @@ class ImageDownloaderGUI(downloaderModel: DownloaderModel) extends ActionListene
 
   private val model: DownloaderModel = downloaderModel
   private val frame: JFrame = new JFrame()
+
   private val inputPanel: InputPanel = new InputPanel(model)
   private val topPanel: TopPanel = new TopPanel(this)
+  private val taskList: TaskList = new TaskList(model)
 
   initFrame()
 
@@ -29,6 +31,7 @@ class ImageDownloaderGUI(downloaderModel: DownloaderModel) extends ActionListene
     })
 
     frame.add(inputPanel, BorderLayout.NORTH)
+    frame.add(taskList, BorderLayout.CENTER)
     frame.setJMenuBar(topPanel)
   }
 
