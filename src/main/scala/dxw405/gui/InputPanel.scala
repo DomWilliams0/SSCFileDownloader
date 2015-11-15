@@ -108,6 +108,18 @@ class InputPanel(downloaderModel: DownloaderModel) extends JPanel {
   def downloadClicked() {
     val selectedFile: File = Option(saveDirChooser.getSelectedFile).getOrElse(defaultDir)
 
+    // create file
+    if (!selectedFile.exists()) {
+      val create = JOptionPane.showOptionDialog(this, f"'${selectedFile.getPath}' does not exist.\nWould you like to create it?",
+        "Uh oh", JOptionPane.YES_NO_OPTION, JOptionPane.INFORMATION_MESSAGE, null, null, null)
+
+      if (create != JOptionPane.YES_OPTION)
+        return
+
+      selectedFile.mkdir()
+    }
+
+
     val error = model.download(siteField.getText, selectedFile.getAbsolutePath)
     if (error.isDefined)
       JOptionPane.showMessageDialog(this, f"<html><b>Could not download files</b><br>${error.get}</html>",
