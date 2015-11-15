@@ -9,11 +9,11 @@ import dxw405.util.Logging
 
 import scala.sys.process._
 
-class DownloadTask(url: URL, saveDirectory: File) extends Callable[Status] {
+class DownloadTask(url: URL, saveDirectory: File) extends Callable[DownloadWrapper] {
 
-  override def call(): Status = {
+  override def call(): DownloadWrapper = {
 
-    var status: Status = StatusNotStarted
+    val dl = new DownloadWrapper(url)
 
     try {
       val file: String = url.getPath.split('/').last
@@ -22,19 +22,19 @@ class DownloadTask(url: URL, saveDirectory: File) extends Callable[Status] {
 
       targetDir.mkdirs()
 
-      status = StatusInProgress
+      dl.status = StatusInProgress
       Logging.debug(s"Downloading '$file' to '$target'")
 
       url #> target !!
 
-      status = StatusSucceeded
+      dl.status = StatusSucceeded
 
     } catch {
       case e: Exception =>
         Logging.error(s"Could not download file from $url", e)
-        status = StatusFailed
+        dl.status = StatusFailed
     }
 
-    status
+    dl
   }
 }

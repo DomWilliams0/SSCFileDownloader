@@ -1,7 +1,7 @@
 package dxw405.gui
 
 import java.awt.BorderLayout
-import java.awt.event.{ActionEvent, ActionListener, WindowAdapter, WindowEvent}
+import java.awt.event.{ActionEvent, ActionListener, WindowEvent}
 import javax.swing.{JFrame, UIManager, WindowConstants}
 
 import dxw405.DownloaderModel
@@ -26,10 +26,6 @@ class ImageDownloaderGUI(downloaderModel: DownloaderModel) extends ActionListene
     frame.setSize(Config.getInt("gui.width"), Config.getInt("gui.height"))
     frame.setResizable(false)
     frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE)
-
-    frame.addWindowListener(new WindowAdapter {
-      override def windowClosing(e: WindowEvent): Unit = model.close()
-    })
 
     // add components
     frame.add(inputPanel, BorderLayout.NORTH)
@@ -61,7 +57,7 @@ class ImageDownloaderGUI(downloaderModel: DownloaderModel) extends ActionListene
     val a = Utils.parseEnum(GUIAction, e.getActionCommand)
 
     a match {
-      case Some(GUIAction.DownloadButtonPressed) => inputPanel.downloadClicked()
+      case Some(GUIAction.DownloadButtonPressed) => inputPanel.downloadClicked(Some(taskList))
       case Some(GUIAction.Exit) => frame.dispatchEvent(new WindowEvent(frame, WindowEvent.WINDOW_CLOSING))
       case _ =>
     }

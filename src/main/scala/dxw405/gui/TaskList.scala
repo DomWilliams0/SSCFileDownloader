@@ -26,17 +26,28 @@ class TaskList(downloaderModel: DownloaderModel) extends JPanel with Observer {
   }
 
 
+  override def update(o: Observable, arg: scala.Any): Unit = {
+
+    // reset all
+    taskList.getModel.asInstanceOf[TaskListModel].update(model.downloads)
+
+  }
+
+  def setStatus(newValue: DownloadWrapper) = {
+    taskList.getModel.asInstanceOf[TaskListModel].addElement(newValue)
+  }
+
+
   class TaskListModel extends DefaultListModel[DownloadWrapper] {
 
     private val downloads = new ListBuffer[DownloadWrapper]()
-
-    def update(downloads: DownloadWrapper) = ???
 
     /**
       * Fills the list with the given downloads
       * @param newDownloads The new downloads
       */
     def update(newDownloads: Seq[DownloadWrapper]) = {
+      downloads.clear()
       newDownloads.copyToBuffer(downloads)
       fireContentsChanged(this, 0, newDownloads.size)
     }
@@ -44,6 +55,11 @@ class TaskList(downloaderModel: DownloaderModel) extends JPanel with Observer {
     override def getSize: Int = downloads.size
 
     override def getElementAt(index: Int): DownloadWrapper = downloads(index)
+
+    override def addElement(element: DownloadWrapper): Unit = {
+      downloads += element
+      fireContentsChanged(this, getSize-1, getSize-1)
+    }
   }
 
   class TaskListRenderer extends JPanel with ListCellRenderer[DownloadWrapper] {
@@ -61,14 +77,5 @@ class TaskList(downloaderModel: DownloaderModel) extends JPanel with Observer {
     }
   }
 
-  override def update(o: Observable, arg: scala.Any): Unit = {
 
-    arg match {
-      // reset all
-      case newDownloads: Seq[DownloadWrapper] => taskList.getModel.asInstanceOf[TaskListModel].update(newDownloads)
-
-      case _ =>
-    }
-
-  }
 }

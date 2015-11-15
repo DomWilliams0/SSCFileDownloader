@@ -105,7 +105,7 @@ class InputPanel(downloaderModel: DownloaderModel) extends JPanel {
     component.add(Box.createHorizontalStrut(10))
   }
 
-  def downloadClicked() {
+  def downloadClicked(taskList: Option[TaskList]) {
     val selectedFile: File = Option(saveDirChooser.getSelectedFile).getOrElse(defaultDir)
 
     // create file
@@ -120,7 +120,7 @@ class InputPanel(downloaderModel: DownloaderModel) extends JPanel {
     }
 
 
-    val error = model.download(siteField.getText, selectedFile.getAbsolutePath)
+    val error = model.download(siteField.getText, selectedFile.getAbsolutePath, taskList)
     if (error.isDefined)
       JOptionPane.showMessageDialog(this, f"<html><b>Could not download files</b><br>${error.get}</html>",
         "Uh oh", JOptionPane.ERROR_MESSAGE)
