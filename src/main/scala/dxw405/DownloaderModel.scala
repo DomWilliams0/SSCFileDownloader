@@ -24,8 +24,7 @@ class DownloaderModel extends Observable {
     val images = doc.select("img[src~=(?i)\\\\?.(png|jpe?g|gif)]")
 
     Logging.debug(f"Scraped ${images.length} images")
-
-    images map (im => im.baseUri().substring(0, im.baseUri().length - 1) + im.attr("src"))
+    images map (_.absUrl("src"))
   }
 
   /**
