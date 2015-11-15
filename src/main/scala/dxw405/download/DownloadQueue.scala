@@ -22,7 +22,7 @@ class DownloadQueue(threadCount: Int) {
 
   def update(urls: mutable.Seq[String], saveDirectory: File) = {
     this.saveDirectory = saveDirectory
-    queue = (urls foldLeft queue) ((acc, urlStr) => acc += new DownloadWrapper(new URL(urlStr)))
+    queue = (urls foldLeft queue) ((acc, urlStr) => acc += new DownloadWrapper(new URL(urlStr), saveDirectory))
   }
 
   def processQueue(taskList: Option[TaskList]) = {
@@ -61,7 +61,7 @@ class DownloadQueue(threadCount: Int) {
     override def doInBackground(): Unit = {
 
       // submit tasks
-      downloads foreach (dl => completion.submit(new DownloadTask(dl.fileURL, DownloadQueue.this.saveDirectory)))
+      downloads foreach (dl => completion.submit(new DownloadTask(dl)))
 
       // publish intermediate results
       for (i <- 0 to downloads.size)

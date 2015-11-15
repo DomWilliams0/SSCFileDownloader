@@ -34,7 +34,7 @@ class TaskList(downloaderModel: DownloaderModel) extends JPanel with Observer {
   }
 
   def setStatus(newValue: DownloadWrapper) = {
-    taskList.getModel.asInstanceOf[TaskListModel].addElement(newValue)
+    taskList.getModel.asInstanceOf[TaskListModel].update(newValue)
   }
 
 
@@ -56,9 +56,10 @@ class TaskList(downloaderModel: DownloaderModel) extends JPanel with Observer {
 
     override def getElementAt(index: Int): DownloadWrapper = downloads(index)
 
-    override def addElement(element: DownloadWrapper): Unit = {
-      downloads += element
-      fireContentsChanged(this, getSize-1, getSize-1)
+    def update(dl: DownloadWrapper): Unit = {
+      val index = downloads.indexOf(dl)
+      if (index > 0)
+        fireContentsChanged(this, index, index)
     }
   }
 
