@@ -18,7 +18,10 @@ class DownloadTask(url: URL, saveDirectory: File) extends Callable[Boolean] {
 
     try {
       val file: String = url.getPath.split('/').last
-      val target: File = Paths.get(saveDirectory.getAbsolutePath, file).toFile
+      val targetDir: File = Paths.get(saveDirectory.getAbsolutePath, url.getHost).toFile.getCanonicalFile
+      val target: File = Paths.get(targetDir.getAbsolutePath, file).toFile.getCanonicalFile
+
+      targetDir.mkdirs()
 
       Logging.debug(s"Downloading '$file' to '$target'")
 
