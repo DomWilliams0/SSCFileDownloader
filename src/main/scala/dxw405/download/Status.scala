@@ -19,4 +19,4 @@ case object StatusInProgress extends Status("Downloading", Color.BLUE)
 
 case object StatusFailed extends Status("Pending", Color.RED)
 
-case object StatusSucceeded extends Status("Pending", Color.GREEN)
+case object StatusSucceeded extends Status("Success", Color.GREEN)
