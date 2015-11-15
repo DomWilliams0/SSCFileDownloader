@@ -8,11 +8,11 @@ import javax.swing._
 import javax.swing.border.EmptyBorder
 
 import dxw405.DownloaderModel
-import dxw405.util.Logging
+import dxw405.util.{Config, Logging}
 
 class InputPanel(downloaderModel: DownloaderModel) extends JPanel {
   private final val borderThickness = 5
-  private final val defaultDir: File = Paths.get(sys.env("HOME"), "ImageDownloader").toFile.getCanonicalFile
+  private final val defaultDir: File = new File(Config.getString("default-save-dir").replace("$HOME", sys.env("HOME"))).getCanonicalFile
   Logging.debug(f"Default save directory is set to ${defaultDir.getAbsolutePath}")
 
   private val model = downloaderModel
