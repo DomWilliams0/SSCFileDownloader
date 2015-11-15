@@ -68,8 +68,6 @@ class DownloaderModel extends Observable {
     // fetch urls
     val urls = getImages(site)
 
-    Logging.debug(s"Images to download: $fileQueue")
-
     // add to queue
     fileQueue.update(urls, saveDir)
 
