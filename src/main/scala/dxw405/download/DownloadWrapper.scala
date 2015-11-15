@@ -1,11 +1,17 @@
 package dxw405.download
 
 import java.net.URL
+import java.util.concurrent.Future
 
 class DownloadWrapper(url: URL) {
 
-  val fileURL = url
-  val status = StatusNotStarted
+  var status: Status = StatusNotStarted
+  var future: Future[Status] = null
 
-  override def toString = s"DownloadWrapper($fileURL, $status)"
+  private val _fileURL = url
+
+  def fileURL = _fileURL
+
+  def cancel = future.cancel(true)
+
 }

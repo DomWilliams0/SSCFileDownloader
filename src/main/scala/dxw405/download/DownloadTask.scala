@@ -6,15 +6,14 @@ import java.nio.file.Paths
 import java.util.concurrent.Callable
 
 import dxw405.util.Logging
-import sys.process._
 
-class DownloadTask(url: URL, saveDirectory: File) extends Callable[Boolean] {
+import scala.sys.process._
 
-  /**
-    * Downloads the given file
-    * @return If the download was successful
-    */
-  override def call(): Boolean = {
+class DownloadTask(url: URL, saveDirectory: File) extends Callable[Status] {
+
+  override def call(): Status = {
+
+    var status: Status = StatusNotStarted
 
     try {
       val file: String = url.getPath.split('/').last
@@ -23,15 +22,19 @@ class DownloadTask(url: URL, saveDirectory: File) extends Callable[Boolean] {
 
       targetDir.mkdirs()
 
+      status = StatusInProgress
       Logging.debug(s"Downloading '$file' to '$target'")
 
       url #> target !!
 
+      status = StatusSucceeded
+
     } catch {
       case e: Exception =>
         Logging.error(s"Could not download file from $url", e)
-        return false
+        status = StatusFailed
     }
-    true
+
+    status
   }
 }

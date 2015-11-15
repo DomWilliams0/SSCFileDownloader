@@ -70,8 +70,13 @@ class DownloaderModel extends Observable {
     // add to queue
     fileQueue.update(urls, saveDir)
 
+    // start downloading
+    val tasks = fileQueue.processQueue() toSeq
 
-    // todo start downloading
+    // update observers
+    setChanged()
+    notifyObservers(tasks)
+
 
     None
   }

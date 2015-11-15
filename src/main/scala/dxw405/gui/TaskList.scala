@@ -1,6 +1,7 @@
 package dxw405.gui
 
 import java.awt.{BorderLayout, Component}
+import java.util.{Observable, Observer}
 import javax.swing._
 
 import dxw405.DownloaderModel
@@ -8,7 +9,7 @@ import dxw405.download.DownloadWrapper
 
 import scala.collection.mutable.ListBuffer
 
-class TaskList(downloaderModel: DownloaderModel) extends JPanel {
+class TaskList(downloaderModel: DownloaderModel) extends JPanel with Observer {
 
   private val model = downloaderModel
 
@@ -28,6 +29,17 @@ class TaskList(downloaderModel: DownloaderModel) extends JPanel {
   class TaskListModel extends DefaultListModel[DownloadWrapper] {
 
     private val downloads = new ListBuffer[DownloadWrapper]()
+
+    def update(downloads: DownloadWrapper) = ???
+
+    /**
+      * Fills the list with the given downloads
+      * @param newDownloads The new downloads
+      */
+    def update(newDownloads: Seq[DownloadWrapper]) = {
+      newDownloads.copyToBuffer(downloads)
+      fireContentsChanged(this, 0, newDownloads.size)
+    }
 
     override def getSize: Int = downloads.size
 
@@ -49,4 +61,14 @@ class TaskList(downloaderModel: DownloaderModel) extends JPanel {
     }
   }
 
+  override def update(o: Observable, arg: scala.Any): Unit = {
+
+    arg match {
+      // reset all
+      case newDownloads: Seq[DownloadWrapper] => taskList.getModel.asInstanceOf[TaskListModel].update(newDownloads)
+
+      case _ =>
+    }
+
+  }
 }

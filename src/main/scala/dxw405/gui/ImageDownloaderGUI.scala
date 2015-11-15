@@ -26,13 +26,18 @@ class ImageDownloaderGUI(downloaderModel: DownloaderModel) extends ActionListene
     frame.setSize(Config.getInt("gui.width"), Config.getInt("gui.height"))
     frame.setResizable(false)
     frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE)
+
     frame.addWindowListener(new WindowAdapter {
       override def windowClosing(e: WindowEvent): Unit = model.close()
     })
 
+    // add components
     frame.add(inputPanel, BorderLayout.NORTH)
     frame.add(taskList, BorderLayout.CENTER)
     frame.setJMenuBar(topPanel)
+
+    // model observers
+    model.addObserver(taskList)
   }
 
   private def initOSSkin() {

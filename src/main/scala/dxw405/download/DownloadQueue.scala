@@ -2,7 +2,7 @@ package dxw405.download
 
 import java.io.File
 import java.net.URL
-import java.util.concurrent.{Executors, Future}
+import java.util.concurrent.Executors
 
 import dxw405.util.Logging
 
@@ -10,15 +10,31 @@ import scala.collection.mutable
 
 class DownloadQueue(threadCount: Int) {
 
-  private var downloads = mutable.ListBuffer[Future[Boolean]]()
+  private val downloads = mutable.ListBuffer[DownloadWrapper]()
+  private var saveDirectory: File = null
+
+  private var queue = mutable.ListBuffer[DownloadWrapper]()
   private lazy val pool = Executors.newFixedThreadPool(threadCount)
 
   def update(urls: mutable.Seq[String], saveDirectory: File) = {
-    // submit to thread pool
-    val futures = urls map (s => pool.submit(new DownloadTask(new URL(s), saveDirectory)))
+    this.saveDirectory = saveDirectory
+    queue = (urls foldLeft queue) ((acc, urlStr) => acc += new DownloadWrapper(new URL(urlStr)))
+  }
 
-    // add to futures list
-    downloads = futures.foldLeft(downloads)(_ += _)
+  def processQueue() = {
+    // stop all current downloads
+    downloads foreach (_.cancel)
+    downloads.clear()
+
+    // submit all to queue
+    for (wrapper <- queue) {
+      wrapper.future = pool.submit(new DownloadTask(wrapper.fileURL, saveDirectory))
+      downloads += wrapper
+    }
+
+    // todo poll every 50ms
+
+    downloads
   }
 
   def close(): Unit = {
