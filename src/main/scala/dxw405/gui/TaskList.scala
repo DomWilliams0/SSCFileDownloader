@@ -14,27 +14,25 @@ class TaskList(downloaderModel: DownloaderModel) extends JPanel with Observer {
   private val model = downloaderModel
 
   private val taskList = new JList[DownloadWrapper]()
-  taskList.setModel(new TaskListModel)
+  private val scrollPane = new JScrollPane(taskList)
+  private val taskListModel = new TaskListModel
+
+  taskList.setModel(taskListModel)
   taskList.setCellRenderer(new TaskListRenderer)
   taskList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION)
 
-  {
-    val scrollPane = new JScrollPane(taskList)
-
-    setLayout(new BorderLayout)
-    add(scrollPane, BorderLayout.CENTER)
-  }
-
+  setLayout(new BorderLayout)
+  add(scrollPane, BorderLayout.CENTER)
 
   override def update(o: Observable, arg: scala.Any): Unit = {
-
-    // reset all
-    taskList.getModel.asInstanceOf[TaskListModel].update(model.downloads)
-
+    taskListModel.update(model.downloads)
   }
 
   def setStatus(newValue: DownloadWrapper) = {
-    taskList.getModel.asInstanceOf[TaskListModel].update(newValue)
+    taskListModel.update(newValue)
+
+    val scrollIndex = Math.min(taskListModel.getIndex(newValue) + 1, taskListModel.getSize - 1)
+    taskList.ensureIndexIsVisible(scrollIndex)
   }
 
 
@@ -61,6 +59,9 @@ class TaskList(downloaderModel: DownloaderModel) extends JPanel with Observer {
       if (index > 0)
         fireContentsChanged(this, index, index)
     }
+
+    def getIndex(dl: DownloadWrapper): Int = downloads.indexOf(dl)
+
   }
 
   class TaskListRenderer extends JPanel with ListCellRenderer[DownloadWrapper] {
