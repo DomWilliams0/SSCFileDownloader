@@ -1,8 +1,9 @@
 package dxw405.gui
 
-import java.awt.{BorderLayout, Component}
+import java.awt._
 import java.util.{Observable, Observer}
 import javax.swing._
+import javax.swing.border.EmptyBorder
 
 import dxw405.DownloaderModel
 import dxw405.download.DownloadWrapper
@@ -65,16 +66,26 @@ class TaskList(downloaderModel: DownloaderModel) extends JPanel with Observer {
   }
 
   class TaskListRenderer extends JPanel with ListCellRenderer[DownloadWrapper] {
-    private val label = new JLabel
+    private val selected = new Color(154, 198, 255)
 
-    add(label)
+    private val fileName = new JLabel("", SwingConstants.LEFT)
+    private val status = new JLabel("", SwingConstants.CENTER)
+
+    setLayout(new BorderLayout)
+    setBorder(new EmptyBorder(0, 10, 0, 10))
+    add(fileName, BorderLayout.CENTER)
+    add(status, BorderLayout.EAST)
 
     override def getListCellRendererComponent(list: JList[_ <: DownloadWrapper], value: DownloadWrapper,
                                               index: Int, isSelected: Boolean, cellHasFocus: Boolean): Component = {
 
-      setBackground(value.status.colour)
+      setBackground(if (isSelected) selected else value.status.colour)
 
-      label.setText(f"${value.fileURL.getPath}: ${value.status.pretty}")
+      fileName.setText(value.fileURL.getFile)
+      fileName.setToolTipText(s"URL: ${value.fileURL.toExternalForm}")
+
+      status.setText(s"<html><b>${value.status.pretty}</b></html>")
+
       this
     }
   }
