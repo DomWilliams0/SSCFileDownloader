@@ -4,12 +4,11 @@ import java.awt.Color
 import javax.swing.UIManager
 
 sealed abstract class Status(prettyString: String, statusColour: Color) {
-  private val _pretty = prettyString.toUpperCase
-  private val _colour = statusColour
+	private val _pretty = prettyString.toUpperCase
 
-  def pretty = _pretty
+	def pretty = _pretty
 
-  def colour = _colour
+	def colour = statusColour
 
 }
 

@@ -5,10 +5,9 @@ import java.net.URL
 
 class DownloadWrapper(url: URL, saveDir: File) {
 
-  var status: Status = StatusNotStarted
+	var status: Status = StatusNotStarted
 
+	def saveDirectory = saveDir
 
-  def saveDirectory = saveDir
-
-  def fileURL = url
+	def fileURL = url
 }
