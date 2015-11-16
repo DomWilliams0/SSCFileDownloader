@@ -15,8 +15,8 @@ sealed abstract class Status(prettyString: String, statusColour: Color) {
 
 case object StatusNotStarted extends Status("Waiting", UIManager.getColor("Panel.background"))
 
-case object StatusInProgress extends Status("Downloading", Color.BLUE)
+case object StatusInProgress extends Status("Downloading", new Color(243, 156, 18))
 
-case object StatusFailed extends Status("Pending", Color.RED)
+case object StatusFailed extends Status("Failed", new Color(231, 76, 60))
 
-case object StatusSucceeded extends Status("Success", Color.GREEN)
+case object StatusSucceeded extends Status("Success", new Color(46, 204, 113))
