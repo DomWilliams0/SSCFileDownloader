@@ -8,21 +8,26 @@ import java.util.concurrent.{ExecutorCompletionService, Executors}
 import javax.swing.SwingWorker
 
 import dxw405.gui.TaskList
+import dxw405.util.Logging
 
 import scala.collection.JavaConversions._
 import scala.collection.mutable
 
-class DownloadQueue(threadCount: Int) {
+class DownloadQueue {
 
   protected final val intermediateResultProperty = "intermediate result"
   private var queue = mutable.ListBuffer[DownloadWrapper]()
+  private var threadCount = 1
 
-  def update(urls: mutable.Seq[String], saveDirectory: File) = {
+  def update(urls: mutable.Seq[String], saveDirectory: File, threadCount: Int) = {
+    this.threadCount = threadCount
     queue.clear()
     queue = (urls foldLeft queue) ((acc, urlStr) => acc += new DownloadWrapper(new URL(urlStr), saveDirectory))
   }
 
   def processQueue(taskList: Option[TaskList]) = {
+    Logging.info(s"Starting ${queue.size} downloads with $threadCount threads")
+
     val worker = new DownloadWorker(queue, threadCount)
     worker.addPropertyChangeListener(new DownloaderSupervisor(taskList))
     worker.execute()
@@ -75,6 +80,10 @@ class DownloadQueue(threadCount: Int) {
       val newV = result
       current = newV
       firePropertyChange(DownloadQueue.this.intermediateResultProperty, oldV, newV)
+    }
+
+    override def done(): Unit = {
+      pool.shutdown()
     }
   }
 

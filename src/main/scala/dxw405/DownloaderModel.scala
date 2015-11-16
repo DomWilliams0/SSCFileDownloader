@@ -4,7 +4,7 @@ import java.io.File
 import java.net.URL
 import java.util.Observable
 
-import dxw405.download.{DownloadWrapper, DownloadQueue}
+import dxw405.download.{DownloadQueue, DownloadWrapper}
 import dxw405.gui.TaskList
 import dxw405.util.Logging
 import org.jsoup.Jsoup
@@ -13,7 +13,7 @@ import scala.collection.JavaConversions._
 import scala.collection.mutable
 
 class DownloaderModel extends Observable {
-  private val fileQueue = new DownloadQueue(1)
+  private val fileQueue = new DownloadQueue
   private var _downloads = Seq[DownloadWrapper]()
 
   def downloads = _downloads
@@ -56,9 +56,10 @@ class DownloaderModel extends Observable {
     * @param site The site to download from
     * @param downloadDirPath The directory to save files to
     * @param taskList Optional GUI list to update
+    * @param threadCount The number of threads to use
     * @return Some error message, or None if the operation succeeded
     */
-  def download(site: String, downloadDirPath: String, taskList: Option[TaskList]): Option[String] = {
+  def download(site: String, downloadDirPath: String, threadCount: Int, taskList: Option[TaskList]): Option[String] = {
     // validate save dir
     val saveDir = new File(downloadDirPath)
     if (!saveDir.exists())
@@ -73,7 +74,7 @@ class DownloaderModel extends Observable {
     val urls = getImages(site)
 
     // add to queue
-    fileQueue.update(urls, saveDir)
+    fileQueue.update(urls, saveDir, threadCount)
 
     // start downloading
     _downloads = fileQueue.processQueue(taskList) toSeq

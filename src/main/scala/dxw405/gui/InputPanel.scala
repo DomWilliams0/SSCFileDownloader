@@ -1,9 +1,10 @@
 package dxw405.gui
 
-import java.awt.BorderLayout
 import java.awt.event.{ActionEvent, ActionListener}
+import java.awt.{BorderLayout, FlowLayout, GridLayout}
 import java.io.File
 import java.nio.file.{InvalidPathException, Paths}
+import java.util
 import javax.swing._
 import javax.swing.border.EmptyBorder
 
@@ -20,6 +21,8 @@ class InputPanel(downloaderModel: DownloaderModel) extends JPanel {
   private val saveDirField = new JTextField
   private val siteField = new TextFieldPlaceholder("http://google.com")
   private val saveDirChooser = new JFileChooser(defaultDir)
+  private val threadCount: JComboBox[Int] = new JComboBox[Int]()
+
 
   saveDirChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY)
   saveDirChooser.setMultiSelectionEnabled(false)
@@ -28,6 +31,8 @@ class InputPanel(downloaderModel: DownloaderModel) extends JPanel {
   val fieldContainer = createBoxPanel(BoxLayout.Y_AXIS)
   fieldContainer.add(createField("Webpage", siteField), BorderLayout.NORTH)
   fieldContainer.add(createField("Save Directory", createSaveDirChooserPanel))
+
+  fieldContainer.add(createDownloadOptionsPanel())
 
   setLayout(new BorderLayout)
   add(fieldContainer, BorderLayout.NORTH)
@@ -96,6 +101,42 @@ class InputPanel(downloaderModel: DownloaderModel) extends JPanel {
 
   }
 
+  private def createDownloadOptionsPanel() = {
+    def createThreadChoicePanel(): JPanel = {
+      val vec = new util.Vector[Int]()
+      Range(1, 40) foreach vec.add
+
+      threadCount.setModel(new DefaultComboBoxModel[Int](vec))
+      val field = createField("Download Threads", threadCount)
+
+      val container = new JPanel(new FlowLayout(FlowLayout.CENTER))
+      container.add(field)
+      container
+    }
+
+    def createFileTypeChoice(): JComponent = {
+
+      val button = new JButton(new AbstractAction("Choose") {
+        override def actionPerformed(e: ActionEvent): Unit = {
+          JOptionPane.showMessageDialog(null, "Boop!")
+        }
+      })
+
+      val container = new JPanel(new FlowLayout(FlowLayout.CENTER))
+      container.add(createField("File types", button))
+      container
+    }
+
+    val panel = new JPanel(new GridLayout(1, 2))
+
+    panel.add(createThreadChoicePanel())
+    panel.add(createFileTypeChoice())
+
+    panel
+  }
+
+
+
   /**
     * Adds a consistent amount of horizontal spacing to the given component
     *
@@ -120,7 +161,7 @@ class InputPanel(downloaderModel: DownloaderModel) extends JPanel {
     }
 
 
-    val error = model.download(siteField.getText, selectedFile.getAbsolutePath, taskList)
+    val error = model.download(siteField.getText, selectedFile.getAbsolutePath, threadCount.getSelectedItem.asInstanceOf[Int], taskList)
     if (error.isDefined)
       JOptionPane.showMessageDialog(this, f"<html><b>Could not download files</b><br>${error.get}</html>",
         "Uh oh", JOptionPane.ERROR_MESSAGE)

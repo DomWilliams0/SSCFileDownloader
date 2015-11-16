@@ -1,5 +1,7 @@
 package dxw405.util
 
+import java.util
+
 import com.typesafe.config.{ConfigException, ConfigFactory, ConfigValue}
 
 object Config {
@@ -31,4 +33,6 @@ object Config {
   def getDouble(path: String): Double = config.getDouble(path)
 
   def getValue(path: String): ConfigValue = config.getValue(path)
+
+  def getStringList(path: String): util.List[String] = config.getStringList(path)
 }
