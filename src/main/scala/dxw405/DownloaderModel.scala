@@ -86,6 +86,8 @@ class DownloaderModel extends Observable {
 
 		// fetch urls
 		val urls = fetchURLs(site, fileExtensions)
+		if (urls.isEmpty)
+			return Some("There are no files matching your current file extension filter on that site")
 
 		// add to queue
 		fileQueue.update(site, urls, saveDir, threadCount, toggleComponent)
