@@ -78,7 +78,7 @@ class DownloadQueue {
 			pool.shutdown()
 
 			// publish intermediate results
-			for (i <- 0 to downloads.size)
+			for (i <- downloads.indices)
 				publish(completion.take().get())
 
 			// todo progress bar and timeout
