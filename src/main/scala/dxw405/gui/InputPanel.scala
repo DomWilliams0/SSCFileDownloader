@@ -26,7 +26,12 @@ class InputPanel(downloaderModel: DownloaderModel) extends JPanel {
 
 	saveDirChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY)
 	saveDirChooser.setMultiSelectionEnabled(false)
-	fileExtensions.setListData(Array("png", "jpg", "jpeg", "js"))
+
+	{
+		val exts = Array("png", "jpg", "jpeg", "js", "md", "html")
+		fileExtensions.setListData(exts)
+		fileExtensions.setSelectedIndices(exts.indices toArray)
+	}
 
 	// init panel
 	val fieldContainer = createBoxPanel(BoxLayout.Y_AXIS)
