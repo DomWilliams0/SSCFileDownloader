@@ -11,6 +11,7 @@ import org.jsoup.Jsoup
 
 import scala.collection.JavaConversions._
 import scala.collection.mutable
+import scala.collection.mutable.ListBuffer
 
 class DownloaderModel extends Observable {
 	private val fileQueue = new DownloadQueue
@@ -19,16 +20,22 @@ class DownloaderModel extends Observable {
 	def downloads = _downloads
 
 	/**
-	  * Gets all image URLs on the given page
+	  * Gets all file URLs on the given page that match the given file extensions
 	  * @param site The URL of the page
-	  * @return A buffer of all image URLs
+	  * @param fileExtensions Non-empty list of file extensions to fetch
+	  * @return A buffer of URLs to download
 	  */
-	private def getImages(site: String): mutable.Buffer[String] = {
+	private def fetchURLs(site: String, fileExtensions: List[String]): mutable.Buffer[String] = {
 		val doc = Jsoup.connect(site).get()
-		val images = doc.select("img[src~=(?i)\\\\?.(png|jpe?g|gif)]")
 
-		Logging.debug(s"Scraped ${images.length} images")
-		images map (_.absUrl("src"))
+		val allExtensions = fileExtensions.mkString(".(", "|", ")$]")
+
+		val allLinks = doc.select("a[href~=(?i)" + allExtensions)
+		val allImages = doc.select("img[src~=(?i)\\\\?" + allExtensions)
+
+		Logging.debug(s"Scraped ${allLinks.length + allImages.length} files and images")
+
+		(allLinks map (_.absUrl("href"))) ++ (allImages map (_.absUrl("src")))
 	}
 
 	/**
@@ -76,8 +83,7 @@ class DownloaderModel extends Observable {
 			return Some("You haven't chosen any file extensions to download")
 
 		// fetch urls
-		// todo honour file extension list
-		val urls = getImages(site)
+		val urls = fetchURLs(site, fileExtensions)
 
 		// add to queue
 		fileQueue.update(urls, saveDir, threadCount)
