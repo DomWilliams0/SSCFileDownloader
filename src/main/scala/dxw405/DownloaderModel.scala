@@ -11,7 +11,6 @@ import org.jsoup.Jsoup
 
 import scala.collection.JavaConversions._
 import scala.collection.mutable
-import scala.collection.mutable.ListBuffer
 
 class DownloaderModel extends Observable {
 	private val fileQueue = new DownloadQueue
@@ -59,7 +58,7 @@ class DownloaderModel extends Observable {
 	}
 
 	/**
-	  * Attempts to download all images from the given site, and save them to the given directory
+	  * Attempts to download all files with the given extensions from the given site, and save them to the given directory
 	  * @param site The site to download from
 	  * @param downloadDirPath The directory to save files to
 	  * @param threadCount The number of threads to use

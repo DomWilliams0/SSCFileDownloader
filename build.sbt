@@ -1,4 +1,4 @@
-name := "SSCImageDownloader"
+name := "SSCFileDownloader"
 
 version := "1.0"
 
