@@ -7,7 +7,7 @@ import javax.swing.{JFrame, UIManager, WindowConstants}
 import dxw405.DownloaderModel
 import dxw405.util.{Config, Logging, Utils}
 
-class ImageDownloaderGUI(model: DownloaderModel) extends ActionListener {
+class FileDownloaderGUI(model: DownloaderModel) extends ActionListener {
 	if (Config.getBoolean("gui.native-skin"))
 		initOSSkin()
 
@@ -21,7 +21,7 @@ class ImageDownloaderGUI(model: DownloaderModel) extends ActionListener {
 
 	private def initFrame() {
 		frame.setLayout(new BorderLayout)
-		frame.setTitle("Image Downloader")
+		frame.setTitle("File Downloader")
 		frame.setSize(Config.getInt("gui.width"), Config.getInt("gui.height"))
 		frame.setResizable(false)
 		frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE)

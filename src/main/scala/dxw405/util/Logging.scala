@@ -6,7 +6,7 @@ import com.typesafe.scalalogging.Logger
 import org.slf4j.LoggerFactory
 
 object Logging {
-	private val logger = Logger(LoggerFactory.getLogger("ImageDownloader"))
+	private val logger = Logger(LoggerFactory.getLogger("FileDownloader"))
 
 	def error(message: String): Unit = logger.error(message)
 
