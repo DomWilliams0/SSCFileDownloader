@@ -7,7 +7,7 @@ import java.nio.file.{InvalidPathException, Paths}
 import java.util
 import javax.swing._
 import javax.swing.border.EmptyBorder
-import scala.collection.JavaConversions._
+
 import dxw405.DownloaderModel
 import dxw405.util.{Config, Logging}
 
@@ -22,16 +22,10 @@ class InputPanel(downloaderModel: DownloaderModel) extends JPanel {
 	private val siteField = new TextFieldPlaceholder("http://google.com")
 	private val saveDirChooser = new JFileChooser(defaultDir)
 	private val threadCount: JComboBox[Int] = new JComboBox[Int]()
-	private val fileExtensions = new JList[String]()
+	private val fileExtensions = new FileExtensionList
 
 	saveDirChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY)
 	saveDirChooser.setMultiSelectionEnabled(false)
-
-	{
-		val exts = Array("png", "jpg", "jpeg", "js", "md", "html")
-		fileExtensions.setListData(exts)
-		fileExtensions.setSelectedIndices(exts.indices toArray)
-	}
 
 	// init panel
 	val fieldContainer = createBoxPanel(BoxLayout.Y_AXIS)
@@ -72,9 +66,7 @@ class InputPanel(downloaderModel: DownloaderModel) extends JPanel {
 	}
 
 	/**
-	  * Creates the input fields for choosing save directory
-	  *
-	  * @return The panel holding the fields
+	  * @return A panel holding the save directory input fields
 	  */
 	private def createSaveDirChooserPanel: JPanel = {
 		val panel: JPanel = createBoxPanel(BoxLayout.X_AXIS)
@@ -107,6 +99,9 @@ class InputPanel(downloaderModel: DownloaderModel) extends JPanel {
 
 	}
 
+	/**
+	  * @return A panel with download threads count and file type input fields
+	  */
 	private def createDownloadOptionsPanel() = {
 		def createThreadChoicePanel(): JPanel = {
 			val vec = new util.Vector[Int]()
@@ -121,21 +116,10 @@ class InputPanel(downloaderModel: DownloaderModel) extends JPanel {
 		}
 
 		def createFileTypeChoice(): JComponent = {
-
-			def label = s"Choose (${fileExtensions.getSelectedIndices.length})"
-
+			def label = s"Choose (${fileExtensions.getSelectedExtensionsCount})"
 			val button = new JButton(new AbstractAction(label) {
 				override def actionPerformed(e: ActionEvent): Unit = {
-
-					val choiceBackup = fileExtensions.getSelectedIndices
-
-					val buttonPressed = JOptionPane.showOptionDialog(InputPanel.this, fileExtensions, "File Type Chooser",
-						JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, null, null)
-
-					// restore old choices
-					if (buttonPressed != JOptionPane.OK_OPTION)
-						fileExtensions.setSelectedIndices(choiceBackup)
-
+					fileExtensions.display(InputPanel.this)
 					putValue(Action.NAME, label)
 				}
 			})
@@ -182,7 +166,7 @@ class InputPanel(downloaderModel: DownloaderModel) extends JPanel {
 		val error = model.download(siteField.getText,
 			selectedFile.getAbsolutePath,
 			threadCount.getSelectedItem.asInstanceOf[Int],
-			fileExtensions.getSelectedValuesList toList,
+			fileExtensions.getSelectedExtensions,
 			taskList)
 		if (error.isDefined)
 			JOptionPane.showMessageDialog(this, s"<html><b>Could not download files</b><br>${error.get}</html>",
