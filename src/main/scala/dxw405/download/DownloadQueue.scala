@@ -31,6 +31,11 @@ class DownloadQueue {
 		val worker = new DownloadWorker(queue, threadCount)
 		worker.addPropertyChangeListener(new DownloaderSupervisor(taskList))
 		worker.execute()
+
+		// if no gui, wait
+		if (taskList.isEmpty)
+			worker.get()
+
 		queue
 	}
 
@@ -64,6 +69,7 @@ class DownloadQueue {
 
 			// submit tasks
 			downloads foreach (dl => completion.submit(new DownloadTask(dl)))
+			pool.shutdown()
 
 			// publish intermediate results
 			for (i <- 0 to downloads.size)
@@ -82,9 +88,6 @@ class DownloadQueue {
 			firePropertyChange(DownloadQueue.this.intermediateResultProperty, oldV, newV)
 		}
 
-		override def done(): Unit = {
-			pool.shutdown()
-		}
 	}
 
 
