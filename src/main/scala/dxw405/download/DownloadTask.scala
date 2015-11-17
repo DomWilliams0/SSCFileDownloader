@@ -8,7 +8,7 @@ import dxw405.util.Logging
 
 import scala.sys.process._
 
-class DownloadTask(dl: DownloadWrapper) extends Callable[DownloadWrapper] {
+class DownloadTask(dl: DownloadWrapper, saveDir: File) extends Callable[DownloadWrapper] {
 
 	override def call(): DownloadWrapper = {
 
@@ -16,10 +16,9 @@ class DownloadTask(dl: DownloadWrapper) extends Callable[DownloadWrapper] {
 			val url = dl.fileURL
 
 			val file: String = url.getPath.split('/').last
-			val targetDir: File = Paths.get(dl.saveDirectory.getAbsolutePath, url.getHost).toFile.getCanonicalFile
-			val target: File = Paths.get(targetDir.getAbsolutePath, file).toFile.getCanonicalFile
+			val target: File = Paths.get(saveDir.getAbsolutePath, file).toFile.getCanonicalFile
 
-			targetDir.mkdirs()
+			saveDir.mkdirs()
 
 			dl.status = StatusInProgress
 			Logging.debug(s"Downloading '$file' to '$target'")

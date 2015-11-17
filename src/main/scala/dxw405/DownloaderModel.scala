@@ -88,7 +88,7 @@ class DownloaderModel extends Observable {
 		val urls = fetchURLs(site, fileExtensions)
 
 		// add to queue
-		fileQueue.update(urls, saveDir, threadCount, toggleComponent)
+		fileQueue.update(site, urls, saveDir, threadCount, toggleComponent)
 
 		// start downloading
 		_downloads = fileQueue.processQueue(taskList) toSeq
