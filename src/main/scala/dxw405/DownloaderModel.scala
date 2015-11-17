@@ -71,6 +71,10 @@ class DownloaderModel extends Observable {
 		if (validationErrorMessage.isDefined)
 			return validationErrorMessage
 
+		// no file extensions
+		if (fileExtensions.isEmpty)
+			return Some("You haven't chosen any file extensions to download")
+
 		// fetch urls
 		// todo honour file extension list
 		val urls = getImages(site)
