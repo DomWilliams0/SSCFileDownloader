@@ -55,11 +55,12 @@ class DownloaderModel extends Observable {
 	  * Attempts to download all images from the given site, and save them to the given directory
 	  * @param site The site to download from
 	  * @param downloadDirPath The directory to save files to
-	  * @param taskList Optional GUI list to update
 	  * @param threadCount The number of threads to use
+	  * @param fileExtensions A list of file extensions to download
+	  * @param taskList Optional GUI list to update
 	  * @return Some error message, or None if the operation succeeded
 	  */
-	def download(site: String, downloadDirPath: String, threadCount: Int, taskList: Option[TaskList]): Option[String] = {
+	def download(site: String, downloadDirPath: String, threadCount: Int, fileExtensions: List[String], taskList: Option[TaskList]): Option[String] = {
 		// validate save dir
 		val saveDir = new File(downloadDirPath)
 		if (!saveDir.exists())
@@ -71,6 +72,7 @@ class DownloaderModel extends Observable {
 			return validationErrorMessage
 
 		// fetch urls
+		// todo honour file extension list
 		val urls = getImages(site)
 
 		// add to queue

@@ -7,7 +7,7 @@ import java.nio.file.{InvalidPathException, Paths}
 import java.util
 import javax.swing._
 import javax.swing.border.EmptyBorder
-
+import scala.collection.JavaConversions._
 import dxw405.DownloaderModel
 import dxw405.util.{Config, Logging}
 
@@ -22,10 +22,11 @@ class InputPanel(downloaderModel: DownloaderModel) extends JPanel {
 	private val siteField = new TextFieldPlaceholder("http://google.com")
 	private val saveDirChooser = new JFileChooser(defaultDir)
 	private val threadCount: JComboBox[Int] = new JComboBox[Int]()
-
+	private val fileExtensions = new JList[String]()
 
 	saveDirChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY)
 	saveDirChooser.setMultiSelectionEnabled(false)
+	fileExtensions.setListData(Array("png", "jpg", "jpeg", "js"))
 
 	// init panel
 	val fieldContainer = createBoxPanel(BoxLayout.Y_AXIS)
@@ -118,7 +119,18 @@ class InputPanel(downloaderModel: DownloaderModel) extends JPanel {
 
 			val button = new JButton(new AbstractAction("Choose") {
 				override def actionPerformed(e: ActionEvent): Unit = {
-					JOptionPane.showMessageDialog(null, "Boop!")
+
+					val choiceBackup = fileExtensions.getSelectedIndices
+
+					val buttonPressed = JOptionPane.showOptionDialog(InputPanel.this, fileExtensions, "File Type Chooser",
+						JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, null, null)
+
+					// restore old choices
+					if (buttonPressed != JOptionPane.OK_OPTION) {
+						fileExtensions.setSelectedIndices(choiceBackup)
+						return
+					}
+
 				}
 			})
 
@@ -160,7 +172,12 @@ class InputPanel(downloaderModel: DownloaderModel) extends JPanel {
 		}
 
 
-		val error = model.download(siteField.getText, selectedFile.getAbsolutePath, threadCount.getSelectedItem.asInstanceOf[Int], taskList)
+		// start download, and deal with errors
+		val error = model.download(siteField.getText,
+			selectedFile.getAbsolutePath,
+			threadCount.getSelectedItem.asInstanceOf[Int],
+			fileExtensions.getSelectedValuesList toList,
+			taskList)
 		if (error.isDefined)
 			JOptionPane.showMessageDialog(this, s"<html><b>Could not download files</b><br>${error.get}</html>",
 				"Uh oh", JOptionPane.ERROR_MESSAGE)
