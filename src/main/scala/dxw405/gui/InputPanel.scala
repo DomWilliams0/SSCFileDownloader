@@ -122,7 +122,9 @@ class InputPanel(downloaderModel: DownloaderModel) extends JPanel {
 
 		def createFileTypeChoice(): JComponent = {
 
-			val button = new JButton(new AbstractAction("Choose") {
+			def label = s"Choose (${fileExtensions.getSelectedIndices.length})"
+
+			val button = new JButton(new AbstractAction(label) {
 				override def actionPerformed(e: ActionEvent): Unit = {
 
 					val choiceBackup = fileExtensions.getSelectedIndices
@@ -131,11 +133,10 @@ class InputPanel(downloaderModel: DownloaderModel) extends JPanel {
 						JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, null, null)
 
 					// restore old choices
-					if (buttonPressed != JOptionPane.OK_OPTION) {
+					if (buttonPressed != JOptionPane.OK_OPTION)
 						fileExtensions.setSelectedIndices(choiceBackup)
-						return
-					}
 
+					putValue(Action.NAME, label)
 				}
 			})
 
