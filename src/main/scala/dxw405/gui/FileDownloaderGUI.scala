@@ -13,8 +13,8 @@ class FileDownloaderGUI(model: DownloaderModel) extends ActionListener {
 
 	private val frame: JFrame = new JFrame()
 
-	private val inputPanel: InputPanel = new InputPanel(model)
 	private val topPanel: TopPanel = new TopPanel(this)
+	private val inputPanel: InputPanel = new InputPanel(model, topPanel.downloadButton)
 	private val taskList: TaskList = new TaskList(model)
 
 	initFrame()

@@ -1,5 +1,6 @@
 package dxw405.download
 
+import java.awt.Component
 import java.beans.{PropertyChangeEvent, PropertyChangeListener}
 import java.io.File
 import java.net.URL
@@ -18,9 +19,12 @@ class DownloadQueue {
 	protected final val intermediateResultProperty = "intermediate result"
 	private var queue = mutable.ListBuffer[DownloadWrapper]()
 	private var threadCount = 1
+	private var toggleComponent: Option[Component] = None
 
-	def update(urls: mutable.Seq[String], saveDirectory: File, threadCount: Int) = {
+	def update(urls: mutable.Seq[String], saveDirectory: File, threadCount: Int, toggleComponent: Option[Component]) = {
 		this.threadCount = threadCount
+		this.toggleComponent = toggleComponent
+
 		queue.clear()
 		queue = (urls foldLeft queue) ((acc, urlStr) => acc += new DownloadWrapper(new URL(urlStr), saveDirectory))
 	}
@@ -31,6 +35,9 @@ class DownloadQueue {
 		val worker = new DownloadWorker(queue, threadCount)
 		worker.addPropertyChangeListener(new DownloaderSupervisor(taskList))
 		worker.execute()
+
+		// disable component
+		toggleComponent.foreach(_.setEnabled(false))
 
 		// if no gui, wait
 		if (taskList.isEmpty)
@@ -46,9 +53,8 @@ class DownloadQueue {
 
 			// done
 			if (newValue == SwingWorker.StateValue.DONE) {
-
-				// todo reenable download button
 				worker.get()
+				toggleComponent.foreach(_.setEnabled(true))
 			}
 
 			else if (e.getPropertyName == intermediateResultProperty) {

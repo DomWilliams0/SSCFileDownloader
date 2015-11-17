@@ -11,7 +11,7 @@ import javax.swing.border.EmptyBorder
 import dxw405.DownloaderModel
 import dxw405.util.{Config, Logging}
 
-class InputPanel(downloaderModel: DownloaderModel) extends JPanel {
+class InputPanel(downloaderModel: DownloaderModel, downloadButton: JButton) extends JPanel {
 	private final val borderThickness = 5
 	private final val defaultDir: File = new File(Config.getString("default-save-dir").replace("$HOME", sys.env("HOME"))).getCanonicalFile
 	Logging.debug(s"Default save directory is set to ${defaultDir.getAbsolutePath}")
@@ -167,7 +167,8 @@ class InputPanel(downloaderModel: DownloaderModel) extends JPanel {
 			selectedFile.getAbsolutePath,
 			threadCount.getSelectedItem.asInstanceOf[Int],
 			fileExtensions.getSelectedExtensions,
-			taskList)
+			taskList,
+			Some(downloadButton))
 		if (error.isDefined)
 			JOptionPane.showMessageDialog(this, s"<html><b>Could not download files</b><br>${error.get}</html>",
 				"Uh oh", JOptionPane.ERROR_MESSAGE)

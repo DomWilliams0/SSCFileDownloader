@@ -1,5 +1,6 @@
 package dxw405
 
+import java.awt.Component
 import java.io.File
 import java.net.URL
 import java.util.Observable
@@ -64,9 +65,11 @@ class DownloaderModel extends Observable {
 	  * @param threadCount The number of threads to use
 	  * @param fileExtensions A list of file extensions to download
 	  * @param taskList Optional GUI list to update
+	  * @param toggleComponent Optional component to disable at start, and reenable when done
 	  * @return Some error message, or None if the operation succeeded
 	  */
-	def download(site: String, downloadDirPath: String, threadCount: Int, fileExtensions: List[String], taskList: Option[TaskList]): Option[String] = {
+	def download(site: String, downloadDirPath: String, threadCount: Int, fileExtensions: List[String],
+				 taskList: Option[TaskList], toggleComponent: Option[Component]): Option[String] = {
 		// validate save dir
 		val saveDir = new File(downloadDirPath)
 		if (!saveDir.exists())
@@ -85,7 +88,7 @@ class DownloaderModel extends Observable {
 		val urls = fetchURLs(site, fileExtensions)
 
 		// add to queue
-		fileQueue.update(urls, saveDir, threadCount)
+		fileQueue.update(urls, saveDir, threadCount, toggleComponent)
 
 		// start downloading
 		_downloads = fileQueue.processQueue(taskList) toSeq
