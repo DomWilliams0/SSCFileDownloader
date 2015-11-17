@@ -90,7 +90,7 @@ class TaskList(model: DownloaderModel) extends JPanel with Observer {
 			setBackground(if (isSelected) selected else value.status.colour)
 
 			fileName.setText(limit(value.fileURL.getFile, maxLength))
-			fileName.setToolTipText(s"URL: ${value.fileURL.toExternalForm}")
+			setToolTipText(s"URL: ${value.fileURL.toExternalForm}")
 
 			status.setText(s"<html><b>${value.status.pretty}</b></html>")
 
