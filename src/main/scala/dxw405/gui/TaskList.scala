@@ -7,6 +7,7 @@ import javax.swing.border.EmptyBorder
 
 import dxw405.DownloaderModel
 import dxw405.download.DownloadWrapper
+import dxw405.util.Config
 
 import scala.collection.mutable.ListBuffer
 
@@ -69,6 +70,8 @@ class TaskList(model: DownloaderModel) extends JPanel with Observer {
 		private val fileName = new JLabel("", SwingConstants.LEFT)
 		private val status = new JLabel("", SwingConstants.CENTER)
 
+		private val maxLength = Config.getInt("gui.max-url-length")
+
 		setLayout(new BorderLayout)
 		setBorder(new EmptyBorder(0, 10, 0, 10))
 		add(fileName, BorderLayout.CENTER)
@@ -77,9 +80,16 @@ class TaskList(model: DownloaderModel) extends JPanel with Observer {
 		override def getListCellRendererComponent(list: JList[_ <: DownloadWrapper], value: DownloadWrapper,
 												  index: Int, isSelected: Boolean, cellHasFocus: Boolean): Component = {
 
+			def limit(s: String, length: Int): String = {
+				if (s.length <= length)
+					return s
+
+				s.substring(0, if (length < 3) length else length - 3) + "..."
+			}
+
 			setBackground(if (isSelected) selected else value.status.colour)
 
-			fileName.setText(value.fileURL.getFile)
+			fileName.setText(limit(value.fileURL.getFile, maxLength))
 			fileName.setToolTipText(s"URL: ${value.fileURL.toExternalForm}")
 
 			status.setText(s"<html><b>${value.status.pretty}</b></html>")
