@@ -9,6 +9,7 @@ import dxw405.download.{DownloadQueue, DownloadWrapper}
 import dxw405.gui.TaskList
 import dxw405.util.Logging
 import org.jsoup.Jsoup
+import org.jsoup.nodes.Document
 
 import scala.collection.JavaConversions._
 import scala.collection.mutable
@@ -23,10 +24,16 @@ class DownloaderModel extends Observable {
 	  * Gets all file URLs on the given page that match the given file extensions
 	  * @param site The URL of the page
 	  * @param fileExtensions Non-empty list of file extensions to fetch
-	  * @return A buffer of URLs to download
+	  * @return Either a buffer of URLs to download, or an exception
 	  */
-	private def fetchURLs(site: String, fileExtensions: List[String]): mutable.Buffer[String] = {
-		val doc = Jsoup.connect(site).get()
+	private def fetchURLs(site: String, fileExtensions: List[String]): Either[mutable.Buffer[String], Exception] = {
+
+		var doc: Document = null
+		try {
+			doc = Jsoup.connect(site).get()
+		} catch {
+			case e: Exception => return Right(e)
+		}
 
 		val allExtensions = fileExtensions.mkString(".(", "|", ")$]")
 
@@ -35,7 +42,7 @@ class DownloaderModel extends Observable {
 
 		Logging.debug(s"Scraped ${allLinks.length + allImages.length} files and images")
 
-		(allLinks map (_.absUrl("href"))) ++ (allImages map (_.absUrl("src")))
+		Left((allLinks map (_.absUrl("href"))) ++ (allImages map (_.absUrl("src"))))
 	}
 
 	/**
@@ -85,21 +92,27 @@ class DownloaderModel extends Observable {
 			return Some("You haven't chosen any file extensions to download")
 
 		// fetch urls
-		val urls = fetchURLs(site, fileExtensions)
-		if (urls.isEmpty)
-			return Some("There are no files matching your current file extension filter on that site")
+		val couldBeURLs = fetchURLs(site, fileExtensions)
+		couldBeURLs match {
+			case Right(error) =>
+				Logging.error("Could not connect", error)
+				Some(error.getMessage)
+			case Left(urls) =>
+				if (urls.isEmpty)
+					return Some("There are no files matching your current file extension filter on that site")
 
-		// add to queue
-		fileQueue.update(site, urls, saveDir, threadCount, toggleComponent)
+				// add to queue
+				fileQueue.update(site, urls, saveDir, threadCount, toggleComponent)
 
-		// start downloading
-		_downloads = fileQueue.processQueue(taskList) toSeq
+				// start downloading
+				_downloads = fileQueue.processQueue(taskList) toSeq
 
-		// update observers
-		setChanged()
-		notifyObservers()
+				// update observers
+				setChanged()
+				notifyObservers()
 
-		None
+				None
+		}
 	}
 
 
