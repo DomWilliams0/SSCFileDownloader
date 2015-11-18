@@ -7,7 +7,7 @@ import java.net.URL
 import java.nio.file.Paths
 import java.util
 import java.util.concurrent.{ExecutorCompletionService, Executors}
-import javax.swing.SwingWorker
+import javax.swing.{SwingUtilities, SwingWorker}
 
 import dxw405.gui.TaskList
 import dxw405.util.Logging
@@ -64,6 +64,9 @@ class DownloadQueue {
 			if (newValue == SwingWorker.StateValue.DONE) {
 				worker.get()
 				toggleComponent.foreach(_.setEnabled(true))
+				SwingUtilities.invokeLater(new Runnable {
+					override def run(): Unit = taskList.foreach(_.repaint())
+				})
 			}
 
 			else if (e.getPropertyName == intermediateResultProperty) {
