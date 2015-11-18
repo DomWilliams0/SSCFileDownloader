@@ -1,7 +1,7 @@
 package dxw405.gui
 
 import java.awt.event.{ActionEvent, ActionListener}
-import java.awt.{BorderLayout, FlowLayout, GridLayout}
+import java.awt._
 import java.io.File
 import java.nio.file.{InvalidPathException, Paths}
 import java.util
@@ -34,6 +34,7 @@ class InputPanel(downloaderModel: DownloaderModel, downloadButton: JButton) exte
 
 	fieldContainer.add(createDownloadOptionsPanel())
 
+	setBorder(new EmptyBorder(5,5,0,5))
 	setLayout(new BorderLayout)
 	add(fieldContainer, BorderLayout.NORTH)
 
