@@ -24,15 +24,15 @@ class TaskList(model: DownloaderModel) extends JPanel with Observer {
 	setLayout(new BorderLayout)
 	add(scrollPane, BorderLayout.CENTER)
 
-	override def update(o: Observable, arg: scala.Any): Unit = {
-		taskListModel.update(model.downloads)
-	}
+	override def update(o: Observable, arg: scala.Any): Unit = taskListModel.update(model.downloads)
 
 	def setStatus(newValue: DownloadWrapper) = {
 		taskListModel.update(newValue)
 
 		val scrollIndex = Math.min(taskListModel.getIndex(newValue) + 1, taskListModel.getSize - 1)
-		taskList.ensureIndexIsVisible(scrollIndex)
+
+		if (Config.getBoolean("gui.scroll-to-latest"))
+			taskList.ensureIndexIsVisible(scrollIndex)
 	}
 
 
