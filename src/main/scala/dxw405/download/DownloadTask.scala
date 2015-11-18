@@ -20,6 +20,13 @@ class DownloadTask(dl: DownloadWrapper, saveDir: File) extends Callable[Download
 
 			saveDir.mkdirs()
 
+			// already exists
+			if (target.exists()) {
+				dl.status = StatusAlreadyExists
+				Logging.debug(s"$file already exists, skipping")
+				return dl
+			}
+
 			dl.status = StatusInProgress
 			Logging.debug(s"Downloading '$file' to '$target'")
 

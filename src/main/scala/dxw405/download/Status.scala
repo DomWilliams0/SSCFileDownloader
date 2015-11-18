@@ -19,3 +19,5 @@ case object StatusInProgress extends Status("Downloading", new Color(243, 156, 1
 case object StatusFailed extends Status("Failed", new Color(231, 76, 60))
 
 case object StatusSucceeded extends Status("Success", new Color(46, 204, 113))
+
+case object StatusAlreadyExists extends Status("Already Exists", new Color(189, 195, 199))
