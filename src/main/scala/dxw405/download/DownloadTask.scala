@@ -4,9 +4,10 @@ import java.io.File
 import java.nio.file.Paths
 import java.util.concurrent.Callable
 
-import dxw405.util.Logging
+import dxw405.util.{Config, Logging}
 
 import scala.sys.process._
+import scala.util.Random
 
 class DownloadTask(dl: DownloadWrapper, saveDir: File) extends Callable[DownloadWrapper] {
 
@@ -31,6 +32,10 @@ class DownloadTask(dl: DownloadWrapper, saveDir: File) extends Callable[Download
 			Logging.debug(s"Downloading '$file' to '$target'")
 
 			url #> target !!
+
+			// work simulation, for testing
+			if (Config.getBoolean("debug.work-simulation.enabled"))
+				Thread.sleep(Random.nextInt(Config.getInt("debug.work-simulation.max-duration")))
 
 			dl.status = StatusSucceeded
 
