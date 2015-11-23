@@ -34,7 +34,7 @@ class InputPanel(downloaderModel: DownloaderModel, downloadButton: JButton) exte
 
 	fieldContainer.add(createDownloadOptionsPanel())
 
-	setBorder(new EmptyBorder(5,5,0,5))
+	setBorder(new EmptyBorder(5, 5, 0, 5))
 	setLayout(new BorderLayout)
 	add(fieldContainer, BorderLayout.NORTH)
 
@@ -164,15 +164,21 @@ class InputPanel(downloaderModel: DownloaderModel, downloadButton: JButton) exte
 
 
 		// start download, and deal with errors
-		val error = model.download(siteField.getText,
-			selectedFile.getAbsolutePath,
-			threadCount.getSelectedItem.asInstanceOf[Int],
-			fileExtensions.getSelectedExtensions,
-			taskList,
-			Some(downloadButton))
-		if (error.isDefined)
-			JOptionPane.showMessageDialog(this, s"<html><b>Could not download files</b><br>${error.get}</html>",
-				"Uh oh", JOptionPane.ERROR_MESSAGE)
+		new SwingWorker[Unit, Unit] {
+			override def doInBackground(): Unit = {
+
+				val error = model.download(siteField.getText,
+					selectedFile.getAbsolutePath,
+					threadCount.getSelectedItem.asInstanceOf[Int],
+					fileExtensions.getSelectedExtensions,
+					taskList,
+					Some(downloadButton))
+				if (error.isDefined)
+					JOptionPane.showMessageDialog(InputPanel.this, s"<html><b>Could not download files</b><br>${error.get}</html>",
+						"Uh oh", JOptionPane.ERROR_MESSAGE)
+			}
+		}.execute()
+
 	}
 
 }
