@@ -4,12 +4,11 @@ import java.awt.event.{ActionEvent, ActionListener}
 import java.awt._
 import java.io.File
 import java.nio.file.{InvalidPathException, Paths}
-import java.util
 import javax.swing._
 import javax.swing.border.EmptyBorder
 
 import dxw405.DownloaderModel
-import dxw405.gui.util.TextFieldPlaceholder
+import dxw405.gui.util.{TextFieldValidation, TextFieldPlaceholder}
 import dxw405.util.{Config, Logging}
 
 class InputPanel(downloaderModel: DownloaderModel, downloadButton: JButton) extends JPanel {
@@ -27,6 +26,7 @@ class InputPanel(downloaderModel: DownloaderModel, downloadButton: JButton) exte
 
 	saveDirChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY)
 	saveDirChooser.setMultiSelectionEnabled(false)
+	TextFieldValidation.startValidation(siteField, _.startsWith("http"))
 
 	// init panel
 	val fieldContainer = createBoxPanel(BoxLayout.Y_AXIS)
@@ -106,7 +106,7 @@ class InputPanel(downloaderModel: DownloaderModel, downloadButton: JButton) exte
 	  */
 	private def createDownloadOptionsPanel() = {
 		def createThreadChoicePanel(): JPanel = {
-			val vec = new util.Vector[Int]()
+			val vec = new java.util.Vector[Int]()
 			Range(1, 40) foreach vec.add
 
 			threadCount.setModel(new DefaultComboBoxModel[Int](vec))

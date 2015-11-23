@@ -4,7 +4,7 @@ import java.awt.event.{ActionEvent, ActionListener}
 import java.awt.{BorderLayout, Component}
 import javax.swing._
 
-import dxw405.gui.util.TextFieldPlaceholder
+import dxw405.gui.util.{TextFieldValidation, TextFieldPlaceholder}
 import dxw405.util.Config
 
 import scala.collection.JavaConversions._
@@ -17,15 +17,18 @@ class FileExtensionList extends JPanel {
 	private val extField = new TextFieldPlaceholder("Enter extra file extensions here")
 	private val extRegex = "^[a-zA-Z]+$".r
 
+	private def validExt = extRegex.pattern.matcher(_: String).matches()
+
 	extList.setCellRenderer(new FileExtensionListRenderer)
 	extList.setSelectionInterval(0, listModel.getSize - 1)
+		TextFieldValidation.startValidation(extField, validExt)
 
 
 	extField.addActionListener(new ActionListener {
 		override def actionPerformed(e: ActionEvent): Unit = {
 			val ext = e.getActionCommand
 
-			if (extRegex.pattern.matcher(ext).matches()) {
+			if (validExt(ext)) {
 				listModel.addExtension(ext)
 				extField.setText("")
 			}
