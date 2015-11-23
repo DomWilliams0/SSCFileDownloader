@@ -4,6 +4,7 @@ import java.awt.event.{ActionEvent, ActionListener}
 import java.awt.{BorderLayout, Component}
 import javax.swing._
 
+import dxw405.gui.util.TextFieldPlaceholder
 import dxw405.util.Config
 
 import scala.collection.JavaConversions._

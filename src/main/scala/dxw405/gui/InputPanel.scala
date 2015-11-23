@@ -9,6 +9,7 @@ import javax.swing._
 import javax.swing.border.EmptyBorder
 
 import dxw405.DownloaderModel
+import dxw405.gui.util.TextFieldPlaceholder
 import dxw405.util.{Config, Logging}
 
 class InputPanel(downloaderModel: DownloaderModel, downloadButton: JButton) extends JPanel {

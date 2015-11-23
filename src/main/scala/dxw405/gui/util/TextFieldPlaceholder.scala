@@ -1,4 +1,4 @@
-package dxw405.gui
+package dxw405.gui.util
 
 import java.awt._
 import javax.swing._
