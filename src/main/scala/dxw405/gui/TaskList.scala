@@ -13,6 +13,10 @@ import scala.collection.mutable.ListBuffer
 
 class TaskList(model: DownloaderModel) extends JPanel with Observer {
 
+	private final val noDownloads = "A"
+	private final val downloadsPresent = "B"
+	private val cardLayout = new CardLayout
+
 	private val taskList = new JList[DownloadWrapper]()
 	private val scrollPane = new JScrollPane(taskList)
 	private val taskListModel = new TaskListModel
@@ -21,10 +25,23 @@ class TaskList(model: DownloaderModel) extends JPanel with Observer {
 	taskList.setCellRenderer(new TaskListRenderer)
 	taskList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION)
 
-	setLayout(new BorderLayout)
-	add(scrollPane, BorderLayout.CENTER)
+	// tasklist
+	val container = new JPanel(new BorderLayout)
+	container.add(scrollPane, BorderLayout.CENTER)
 
-	override def update(o: Observable, arg: scala.Any): Unit = taskListModel.update(model.downloads)
+	// no downloads
+	val noDownloadsPanel = new JPanel
+	noDownloadsPanel.add(new JLabel("No downloads"))
+
+	setLayout(cardLayout)
+	add(container, downloadsPresent)
+	add(noDownloadsPanel, noDownloads)
+	cardLayout.show(this, noDownloads)
+
+	override def update(o: Observable, arg: scala.Any): Unit = {
+		cardLayout.show(this, if (model.downloads.isEmpty) noDownloads else downloadsPresent)
+		taskListModel.update(model.downloads)
+	}
 
 	def setStatus(newValue: DownloadWrapper) = {
 		taskListModel.update(newValue)
