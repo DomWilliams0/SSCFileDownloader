@@ -24,9 +24,11 @@ class DownloaderModel extends Observable {
 	  * Gets all file URLs on the given page that match the given file extensions
 	  * @param site The URL of the page
 	  * @param fileExtensions Non-empty list of file extensions to fetch
+	  * @param toggleComponent An optional component to toggle while the operation is taking place
 	  * @return Either a buffer of URLs to download, or an exception
 	  */
-	private def fetchURLs(site: String, fileExtensions: List[String]): Either[mutable.Buffer[String], Exception] = {
+	private def fetchURLs(site: String, fileExtensions: List[String], toggleComponent: Option[Component]): Either[mutable.Buffer[String], Exception] = {
+		toggleComponent.foreach(_.setEnabled(false))
 
 		var doc: Document = null
 		try {
@@ -92,7 +94,7 @@ class DownloaderModel extends Observable {
 			return Some("You haven't chosen any file extensions to download")
 
 		// fetch urls
-		val couldBeURLs = fetchURLs(site, fileExtensions)
+		val couldBeURLs = fetchURLs(site, fileExtensions, toggleComponent)
 		couldBeURLs match {
 			case Right(error) =>
 				Logging.error("Could not connect", error)
