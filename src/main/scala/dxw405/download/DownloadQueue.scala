@@ -14,6 +14,7 @@ import dxw405.util.Logging
 
 import scala.collection.JavaConversions._
 import scala.collection.mutable
+import scala.collection.mutable.ListBuffer
 
 class DownloadQueue {
 
@@ -23,8 +24,20 @@ class DownloadQueue {
 	private var toggleComponent: Option[Component] = None
 	private var site: String = _
 	private var saveDirectory: File = _
+	private var prepared = false
 
+	/**
+	  * Prepares the queue with the given parameters. This must be called before processQueue
+	  * @param site The base site to download from
+	  * @param urls List of URLs to files to download
+	  * @param saveDirectory The directory to save all downloaded files to
+	  * @param threadCount The number of threads to use to download
+	  * @param toggleComponent An optional component to disable on start, and enable on end
+	  */
 	def update(site: String, urls: mutable.Seq[String], saveDirectory: File, threadCount: Int, toggleComponent: Option[Component]) = {
+		if (threadCount < 1)
+			throw new IllegalArgumentException("Invalid number of download threads")
+
 		this.threadCount = threadCount
 		this.toggleComponent = toggleComponent
 		this.site = site
@@ -32,9 +45,22 @@ class DownloadQueue {
 
 		queue.clear()
 		queue = (urls foldLeft queue) ((acc, urlStr) => acc += new DownloadWrapper(new URL(urlStr)))
+
+		prepared = true
 	}
 
-	def processQueue(taskList: Option[TaskList]) = {
+	/**
+	  * Starts downloading the already prepared queue; update() must be called first
+	  * @param taskList The optional GUI task list to update with download progress
+	  * @return The list of downloads
+	  */
+	def processQueue(taskList: Option[TaskList]): ListBuffer[DownloadWrapper] = {
+		if (!prepared) {
+			Logging.error("Cannot process an unprepared queue!")
+			return new ListBuffer[DownloadWrapper]()
+		}
+
+
 		Logging.info(s"Starting ${queue.size} downloads with $threadCount threads")
 
 		// get dir for site
@@ -52,6 +78,7 @@ class DownloadQueue {
 		if (taskList.isEmpty)
 			worker.get()
 
+		prepared = false
 		queue
 	}
 
