@@ -14,7 +14,7 @@ object TextFieldValidation {
 			private val original = textField.getForeground
 
 			private def check() =
-				textField.setForeground(if (validation(textField.getText)) original else invalid)
+				textField.setForeground(if (textField.getText.isEmpty || validation(textField.getText)) original else invalid)
 
 			override def insertUpdate(e: DocumentEvent): Unit = check
 
