@@ -98,6 +98,7 @@ class DownloaderModel extends Observable {
 		couldBeURLs match {
 			case Right(error) =>
 				Logging.error("Could not connect", error)
+				toggleComponent.foreach(_.setEnabled(true))
 				Some(error.getMessage)
 			case Left(urls) =>
 				if (urls.isEmpty)
